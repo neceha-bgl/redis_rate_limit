@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["neceha-bgl"]
   spec.email         = ["neceha.bgl@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{Rate Limit controler based on Redis}
+  spec.description   = %q{Controle the number of requests permitted to make per minute/hour/day}
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.license       = "MIT"
 
