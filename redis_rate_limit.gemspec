@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency             "redis"
   spec.add_development_dependency "fakeredis",  "~> 0.3.0"
+  spec.add_development_dependency "activesupport"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "fuubar"
   spec.add_development_dependency "timecop"

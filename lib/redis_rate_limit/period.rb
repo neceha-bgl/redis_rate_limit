@@ -16,6 +16,43 @@ module RedisRateLimit
       @limit = options[:limit] || @interval
       @redis = options[:redis]
     end
+
+    # Get an access if the rate limit is not exeeded
+    # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
+    # @return [Hash] Access ticket
+    def get_access(client)
+      current_time = Time.now
+      range = current_time.strftime(@format)
+      current_counter = counter(client)
+      reset = current_time.to_i + @interval - (current_time.to_i % @interval)
+      unless current_counter < @limit
+        return {
+          "pass" => false,
+          "RateLimit" => {"X-RateLimit-Limit" => @limit, "X-RateLimit-Remaining" => 0, "X-RateLimit-Reset" => reset}
+        }
+      end
+      counter = @redis.hincrby(key(client), range, 1)
+      remaining = @limit - counter
+      return {
+        "pass" => true,
+        "RateLimit" => {"X-RateLimit-Limit" => @limit, "X-RateLimit-Remaining" => remaining, "X-RateLimit-Reset" => reset}
+      }
+    end
+
+    # Get the access count for a given client within the current time range
+    # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
+    # @return [Integer] access count
+    def counter(client)
+      range = Time.now.strftime(@format)
+      @redis.hget(key(client), range).to_i
+    end
+
+    private
+
+    def key(client)
+      "#{@ratelimit_name}:#{client}"
+    end
+
   end
 end
 

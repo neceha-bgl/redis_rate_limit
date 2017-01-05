@@ -1,8 +1,8 @@
 require "spec_helper"
+require 'shared_spec_helper'
 
 describe RedisRateLimit::Period do
-  let(:client) { "127.0.0.1" }
-  let(:options) { {redis: Redis.new} }
+  include_examples 'shared behaviour'
   subject { RedisRateLimit::Period.new('clients', options) }
 
   describe '.initialize' do
@@ -22,4 +22,42 @@ describe RedisRateLimit::Period do
       it { expect(subject.instance_variable_get(:@limit)).to eq(60) }
     end
   end
+
+  describe '#get_access' do
+    context 'When the rate limit is not exceeded' do
+      let(:access) { subject.get_access(client) }
+      it "get a pass" do
+        expect(access["pass"]).to be true
+      end
+
+      it "decrement the rate limit" do
+        expect(access["RateLimit"]["X-RateLimit-Remaining"]).to eql(59)
+      end
+    end
+
+    context 'When the rate limit is exceeded' do
+      before(:each) do
+        60.times { subject.get_access(client) }
+      end
+
+      it "fails to get a pass" do
+        access = subject.get_access(client)
+        expect(access["pass"]).to be false
+      end
+
+      it "set the remaining to zero" do
+        access = subject.get_access(client)
+        expect(access["RateLimit"]["X-RateLimit-Remaining"]).to eql(0)
+      end
+
+      it "get a pass when the reset time is reached" do
+        Timecop.travel(minutes(1)) do
+          access = subject.get_access(client)
+          expect(access["pass"]).to be true
+        end
+      end
+    end
+  end
+
+
 end
