@@ -59,5 +59,22 @@ describe RedisRateLimit::Period do
     end
   end
 
+  describe '#counter' do
+    before(:each) do
+      20.times { subject.get_access(client) }
+    end
+
+    context "Before the rate limit reset" do
+      it { expect(subject.counter(client)).to eq(20) }
+    end
+
+    context "After the rate limit reset" do
+      it {
+        Timecop.travel(minutes(1)) do
+          expect(subject.counter(client)).to eq(0)
+        end
+      }
+    end
+  end
 
 end
