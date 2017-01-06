@@ -66,6 +66,13 @@ module RedisRateLimit
       @redis.hgetall(key(client))
     end
 
+    # Clean access history
+    # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
+    # @return [Integer] access count
+    def clear(client)
+      @redis.expire(key(client), 0)
+    end
+
     private
 
     def key(client)

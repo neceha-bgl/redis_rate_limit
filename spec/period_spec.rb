@@ -103,6 +103,27 @@ describe RedisRateLimit::Period do
     end
   end
 
+  describe '#clear' do
+    before(:each) do
+      3.times do |i|
+        Timecop.travel(minutes(i)) do
+          10.times { subject.get_access(client) }
+        end
+      end
+    end
+
+    it "returns 3 entries before clearing" do
+      history = subject.history(client)
+      expect(history.keys.size).to eql(3)
+    end
+
+    it "returns 0 entry after clearing" do
+      subject.clear(client)
+      history = subject.history(client)
+      expect(history.keys.size).to eql(0)
+    end
+  end
+
   describe '#get_access_or_wait' do
     context 'When the rate limit is not exceeded' do
       let(:access) { subject.get_access_or_wait(client) }
