@@ -7,4 +7,12 @@ shared_examples 'shared behaviour' do
     beginning_of_day + i * 60
   end
 
+  def hours(i)
+    beginning_of_day + i * 3600
+  end
+
+  def days(i)
+    beginning_of_day + i * 86_400
+  end
+
 end
