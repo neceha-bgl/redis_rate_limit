@@ -59,6 +59,13 @@ module RedisRateLimit
       @redis.hget(key(client), range).to_i
     end
 
+    # Get access history for a given client
+    # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
+    # @return [Array] Array of hash. key : time range, value : access counter
+    def history(client)
+      @redis.hgetall(key(client))
+    end
+
     private
 
     def key(client)

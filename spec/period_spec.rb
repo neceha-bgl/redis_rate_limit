@@ -77,6 +77,32 @@ describe RedisRateLimit::Period do
     end
   end
 
+  describe '#history' do
+    before(:each) do
+      Timecop.travel(minutes(0)) do
+        5.times { subject.get_access(client) }
+      end
+
+      Timecop.travel(minutes(1)) do
+        10.times { subject.get_access(client) }
+      end
+
+      Timecop.travel(minutes(2)) do
+        61.times { subject.get_access(client) }
+      end
+    end
+
+    it "returns 3 entries" do
+      history = subject.history(client)
+      expect(history.keys.size).to eql(3)
+    end
+
+    it "returns a correct global counter" do
+      global_counter = subject.history(client).values.map{|v| v.to_i}.inject(:+)
+      expect(global_counter).to eql(75)
+    end
+  end
+
   describe '#get_access_or_wait' do
     context 'When the rate limit is not exceeded' do
       let(:access) { subject.get_access_or_wait(client) }
