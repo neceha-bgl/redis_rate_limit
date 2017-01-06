@@ -39,6 +39,18 @@ module RedisRateLimit
       }
     end
 
+    # Get an access if the rate limit is not exeeded or wait few seconds
+    # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
+    # @return [Hash] Access ticket
+    def get_access_or_wait(client)
+      result = nil
+      result = get_access(client)
+      return result if result["pass"]
+      time_to_sleep = result["RateLimit"]["X-RateLimit-Reset"] - Time.now.to_i
+      sleep(time_to_sleep)
+      get_access(client)
+    end
+
     # Get the access count for a given client within the current time range
     # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
     # @return [Integer] access count

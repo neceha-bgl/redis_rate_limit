@@ -77,4 +77,26 @@ describe RedisRateLimit::Period do
     end
   end
 
+  describe '#get_access_or_wait' do
+    context 'When the rate limit is not exceeded' do
+      let(:access) { subject.get_access_or_wait(client) }
+      it "get a pass" do
+        expect(access["pass"]).to be true
+      end
+    end
+
+    context 'When the rate limit is exceeded' do
+      before(:each) do
+        60.times { @pass1 = subject.get_access(client) }
+      end
+
+      it "get a pass after sleeping few seconds" do
+        time_to_sleep = @pass1["RateLimit"]["X-RateLimit-Reset"] - Time.now.to_i
+        allow(subject).to receive(:sleep).with(anything) {Timecop.travel(Time.now + time_to_sleep) }
+        access = subject.get_access_or_wait(client)
+        expect(access["pass"]).to be true
+      end
+    end
+  end
+
 end
