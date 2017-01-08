@@ -7,3 +7,4 @@
 /pkg/
 /spec/reports/
 /tmp/
+/redis_rate_limit-*.gem
