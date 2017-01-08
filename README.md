@@ -1,8 +1,8 @@
 # RedisRateLimit
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/redis_rate_limit`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Build Status](https://secure.travis-ci.org/neceha-bgl/redis_rate_limit.svg?branch=master)](http://travis-ci.org/neceha-bgl/redis_rate_limit)
 
-TODO: Delete this and the text above, and describe your gem
+Action rate limits are applied at a per-key basis in unit time (minutes, hourly, daily ...). By using Redis, this library allows to control actions across multiple servers
 
 ## Installation
 
