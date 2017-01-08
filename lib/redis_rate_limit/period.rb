@@ -23,19 +23,25 @@ module RedisRateLimit
     def get_access(client)
       current_time = Time.now
       range = current_time.strftime(@format)
-      current_counter = counter(client)
       reset = current_time.to_i + @interval - (current_time.to_i % @interval)
-      unless current_counter < @limit
-        return {
-          "pass" => false,
-          "RateLimit" => {"X-RateLimit-Limit" => @limit, "X-RateLimit-Remaining" => 0, "X-RateLimit-Reset" => reset}
-        }
+      key_client = key(client)
+      counter = @redis.hincrby(key_client, range, 1)
+
+      if counter < @limit
+        pass = true
+        remaining = @limit - counter
+      else
+        pass = false
+        remaining = 0
       end
-      counter = @redis.hincrby(key(client), range, 1)
-      remaining = @limit - counter
+
       return {
-        "pass" => true,
-        "RateLimit" => {"X-RateLimit-Limit" => @limit, "X-RateLimit-Remaining" => remaining, "X-RateLimit-Reset" => reset}
+        "pass" => pass,
+        "RateLimit" => {
+          "X-RateLimit-Limit" => @limit,
+          "X-RateLimit-Remaining" => remaining,
+          "X-RateLimit-Counter" => counter,
+          "X-RateLimit-Reset" => reset}
       }
     end
 

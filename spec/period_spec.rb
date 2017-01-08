@@ -99,7 +99,7 @@ describe RedisRateLimit::Period do
 
     it "returns a correct global counter" do
       global_counter = subject.history(client).values.map{|v| v.to_i}.inject(:+)
-      expect(global_counter).to eql(75)
+      expect(global_counter).to eql(76)
     end
   end
 
