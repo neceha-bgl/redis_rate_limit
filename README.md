@@ -25,7 +25,29 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Example 1
+
+Get an access when the rate limit is not exeeded.  
+Restrict access for 127.0.0.1 ip address. The number of access will not exceed 60 per minute
+
+    $ redis = Redis.new
+    $ client = "127.0.0.1"
+    $ ratelimit = MinuteRateLimit.new('clients', redis: redis)
+    $ ratelimit.get_access(client)
+
+Response
+
+      {
+        'pass' => true,
+        'RateLimit' =>
+        {
+          'X-RateLimit-Limit' => 60,
+          'X-RateLimit-Remaining' => 59,
+          'X-RateLimit-Counter' => 1,
+          'X-RateLimit-Reset' => 'Mon, 27 Feb 2017 15:59:11 UTC +00:00'
+        }
+      }
+
 
 ## Development
 
