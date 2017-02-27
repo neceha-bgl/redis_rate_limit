@@ -3,6 +3,7 @@
 [![Build Status](https://secure.travis-ci.org/neceha-bgl/redis_rate_limit.svg?branch=master)](http://travis-ci.org/neceha-bgl/redis_rate_limit)
 [![Code Climate](https://codeclimate.com/github/neceha-bgl/redis_rate_limit/badges/gpa.svg)](https://codeclimate.com/github/neceha-bgl/redis_rate_limit)
 [![Issue Count](https://codeclimate.com/github/neceha-bgl/redis_rate_limit/badges/issue_count.svg)](https://codeclimate.com/github/neceha-bgl/redis_rate_limit)
+[![Test Coverage](https://lima.codeclimate.com/github/neceha-bgl/redis_rate_limit/badges/coverage.svg)](https://lima.codeclimate.com/github/neceha-bgl/redis_rate_limit/coverage)
 
 Action rate limits are applied at a per-key basis in unit time (minutes, hourly, daily ...). By using Redis, this library allows to control actions across multiple servers
 
