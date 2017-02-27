@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 require 'shared_spec_helper'
 
 describe RedisRateLimit::Daily do
@@ -13,7 +13,7 @@ describe RedisRateLimit::Daily do
   end
 
   describe '#history' do
-    context "within the day" do
+    context 'within the day' do
       before(:each) do
         3.times do |i|
           Timecop.travel(hours(i)) do
@@ -22,13 +22,13 @@ describe RedisRateLimit::Daily do
         end
       end
 
-      it "returns 1 entry" do
+      it 'returns 1 entry' do
         history = subject.history(client)
         expect(history.keys.size).to eql(1)
       end
     end
 
-    context "more than one day" do
+    context 'more than one day' do
       before(:each) do
         2.times do |i|
           Timecop.travel(hours(i)) do
@@ -43,11 +43,10 @@ describe RedisRateLimit::Daily do
         end
       end
 
-      it "returns many entries" do
+      it 'returns many entries' do
         history = subject.history(client)
         expect(history.keys.size).to eql(3)
       end
     end
   end
-
 end

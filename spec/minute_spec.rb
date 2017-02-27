@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 require 'shared_spec_helper'
 
 describe RedisRateLimit::Minute do
@@ -7,7 +7,9 @@ describe RedisRateLimit::Minute do
 
   describe '.initialize' do
     it { is_expected.to be_kind_of(RedisRateLimit::Minute) }
-    it { expect(subject.instance_variable_get(:@format)).to eq('%Y-%m-%dT%H:%M') }
+    it do
+      expect(subject.instance_variable_get(:@format)).to eq('%Y-%m-%dT%H:%M')
+    end
     it { expect(subject.instance_variable_get(:@interval)).to eq(60) }
     it { expect(subject.instance_variable_get(:@limit)).to eq(60) }
   end
@@ -21,10 +23,9 @@ describe RedisRateLimit::Minute do
       end
     end
 
-    it "returns 3 entries" do
+    it 'returns 3 entries' do
       history = subject.history(client)
       expect(history.keys.size).to eql(3)
     end
   end
-
 end
