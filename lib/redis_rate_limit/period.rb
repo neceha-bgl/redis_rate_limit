@@ -1,6 +1,5 @@
 module RedisRateLimit
   class Period
-
     # Create an instance of Period.
     # @param [String] name A unique namespace that identify the subject to track : users, emails, ip ...
     # @param [Hash] options Options hash
@@ -21,7 +20,7 @@ module RedisRateLimit
     # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
     # @return [Hash] Access ticket
     def get_access(client)
-      current_time = Time.now
+      current_time = Time.current
       range = current_time.strftime(@format)
       reset = current_time.to_i + @interval - (current_time.to_i % @interval)
       key_client = key(client)
@@ -35,13 +34,15 @@ module RedisRateLimit
         remaining = 0
       end
 
-      return {
-        "pass" => pass,
-        "RateLimit" => {
-          "X-RateLimit-Limit" => @limit,
-          "X-RateLimit-Remaining" => remaining,
-          "X-RateLimit-Counter" => counter,
-          "X-RateLimit-Reset" => reset}
+      {
+        'pass' => pass,
+        'RateLimit' =>
+        {
+          'X-RateLimit-Limit' => @limit,
+          'X-RateLimit-Remaining' => remaining,
+          'X-RateLimit-Counter' => counter,
+          'X-RateLimit-Reset' => reset
+        }
       }
     end
 
@@ -49,10 +50,9 @@ module RedisRateLimit
     # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
     # @return [Hash] Access ticket
     def get_access_or_wait(client)
-      result = nil
       result = get_access(client)
-      return result if result["pass"]
-      time_to_sleep = result["RateLimit"]["X-RateLimit-Reset"] - Time.now.to_i
+      return result if result['pass']
+      time_to_sleep = result['RateLimit']['X-RateLimit-Reset'] - Time.current.to_i
       sleep(time_to_sleep)
       get_access(client)
     end
@@ -61,7 +61,7 @@ module RedisRateLimit
     # @param [String] client The value of the subject to track : 1234, foo@bar.com, 127.0.0.1
     # @return [Integer] access count
     def counter(client)
-      range = Time.now.strftime(@format)
+      range = Time.current.strftime(@format)
       @redis.hget(key(client), range).to_i
     end
 
@@ -84,7 +84,5 @@ module RedisRateLimit
     def key(client)
       "#{@ratelimit_name}:#{client}"
     end
-
   end
 end
-
